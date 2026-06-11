@@ -1,0 +1,27 @@
+{
+  "name": "TV Game Night",
+  "short_name": "TV Game",
+  "description": "Giochi da fare in compagnia, ottimizzati per serate TV Game Night.",
+  "lang": "it",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#08081A",
+  "theme_color": "#08081A",
+  "categories": ["games", "entertainment"],
+  "icons": [
+    {
+      "src": "Icone/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "Icone/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

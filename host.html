@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Taboo Host - TV Game Night</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#08081A">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="TV Game Night">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <style>
+    :root{--bg:#08081A;--surface:#12122A;--surface2:#1C1C3A;--gold:#F5C518;--txt:#F0EEE4;--mut:#7A7A9A;--red:#E74C3C;--green:#2ECC71}
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{width:100%;overflow-x:hidden}
+    body{font-family:Inter,system-ui,sans-serif;background:#08081A;color:#F0EEE4;min-height:100vh;display:flex;justify-content:center;align-items:center;padding:1rem;overflow-x:hidden}
+    button,input{max-width:100%}
+    .card{width:min(100%,550px);background:radial-gradient(circle at top,rgba(245,197,24,.08),transparent 35%),var(--surface);border:1px solid rgba(255,255,255,.08);border-radius:24px;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.45)}
+    header{padding:1.4rem 1.6rem 1rem}
+    header h1{font-size:1.9rem;letter-spacing:2px;margin-bottom:.45rem}
+    header p{color:var(--mut);font-size:.95rem;line-height:1.6}
+    .section{padding:1rem 1.6rem;border-top:1px solid rgba(255,255,255,.08)}
+    .field{display:grid;gap:.65rem;margin-bottom:1rem}
+    .field label{font-size:.8rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
+    .field input{border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:.95rem 1rem;background:rgba(255,255,255,.04);color:#fff;font-size:1rem}
+    .buttons{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:.6rem}
+    .btn{border:none;border-radius:14px;padding:1rem 1.3rem;font-weight:900;cursor:pointer;transition:transform .18s,filter .18s}
+    .btn-primary{background:var(--gold);color:#08081A;flex:1;min-width:140px}
+    .btn-secondary{background:rgba(255,255,255,.08);color:#F0EEE4;flex:1;min-width:140px}
+    .btn-secondary:disabled{opacity:.4;cursor:not-allowed}
+    .status-pill{display:inline-flex;align-items:center;gap:.45rem;padding:.55rem .9rem;border-radius:999px;font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;margin-top:.6rem}
+    .status-pill span{width:9px;height:9px;border-radius:50%;display:inline-block}
+    .connected{background:rgba(46,204,113,.18);color:var(--green)}
+    .connected span{background:var(--green)}
+    .disconnected{background:rgba(231,76,60,.18);color:var(--red)}
+    .info-grid{display:grid;gap:.95rem;margin-top:1rem}
+    .info-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:1rem;min-height:90px}
+    .info-card h2{font-size:.92rem;color:var(--mut);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.55rem}
+    .info-card p{font-size:1.1rem;line-height:1.5;word-break:break-word;overflow-wrap:anywhere}
+    .qr-block{display:flex;flex-direction:column;align-items:center;gap:.9rem;text-align:center;margin-top:1rem}
+    .qr-block img{width:100%;max-width:260px;border-radius:18px;border:1px solid rgba(255,255,255,.12);box-shadow:0 16px 30px rgba(0,0,0,.18)}
+    .hint{color:var(--mut);font-size:.92rem;line-height:1.5;margin-top:.85rem}
+    .btn-back{background:rgba(255,255,255,.08);color:#ccc;border:1.5px solid rgba(255,255,255,.22);border-radius:10px;padding:.6rem 1.3rem;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;cursor:pointer;transition:all .18s;margin-bottom:1.1rem;display:inline-block}
+    .link-copy{display:inline-flex;gap:.45rem;align-items:center;color:var(--txt);text-decoration:none;background:rgba(255,255,255,.06);padding:.75rem 1rem;border-radius:14px;word-break:break-all}
+    @media(hover:hover) and (pointer:fine){
+      .btn:hover{transform:translateY(-1px)}
+      .btn-back:hover{color:#fff;border-color:rgba(255,255,255,.5)}
+    }
+    @media(max-width:540px){
+      body{display:block;padding:.75rem;min-height:100vh}
+      .card{width:100%;border-radius:18px}
+      header{padding:1.1rem 1rem .85rem}
+      header h1{font-size:1.55rem;letter-spacing:1px}
+      header p{font-size:.88rem}
+      .section{padding:.9rem 1rem}
+      .section .section{padding:0;border-top:none}
+      .buttons{flex-direction:column}
+      .btn{width:100%;padding:.85rem 1rem;white-space:normal;line-height:1.25}
+      .status-pill{max-width:100%;white-space:normal;border-radius:14px;line-height:1.25}
+      .info-grid{gap:.7rem}
+      .info-card{min-height:auto;padding:.85rem;border-radius:12px}
+      .info-card h2{font-size:.75rem;letter-spacing:.08em;line-height:1.3}
+      .info-card p{font-size:.98rem}
+      .qr-block img{max-width:min(240px,100%)}
+      .btn-back{width:100%;text-align:center;margin-top:.9rem}
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <header>
+      <h1>Taboo - Host</h1>
+      <p>Controlla il turno e aggiorna lo stato di gioco. Il telefono del giocatore riceverà automaticamente la parola segreta e le parole proibite.</p>
+    </header>
+
+    <section class="section">
+      <div class="buttons">
+        <button class="btn btn-secondary" id="btn-stop">FERMA</button>
+      </div>
+      <div id="connection-state" class="status-pill disconnected"><span></span><span>disconnesso</span></div>
+    </section>
+
+    <section class="section">
+      <div>
+        <div class="qr-block">
+          <img src="qr-code.jpg" alt="QR code per play.html" />
+          <p class="hint">Scansiona il QR per aprire la pagina giocatore.</p>
+        </div>
+      <div class="info-grid">
+        <div class="info-card">
+          <h2>Stato attuale</h2>
+          <p id="host-mode">Modalità: in attesa</p>
+        </div>
+        <div class="info-card">
+          <h2>Giocatore</h2>
+          <p id="host-player">N/A</p>
+        </div>
+        <div class="info-card">
+          <h2>Timer</h2>
+          <p id="host-timer">--</p>
+        </div>
+        <div class="info-card">
+          <h2>Punti turno</h2>
+          <p id="host-score">0</p>
+        </div>
+        <div class="info-card">
+          <h2>Parola pubblica</h2>
+          <p id="host-summary">In attesa del prossimo turno</p>
+        </div>
+      </div>
+      </div>
+      <button class="btn-back" onclick="window.location.href='index.html'">← Menu</button>
+      <p class="hint">Per il telefono giocatore usa <strong>play.html</strong> o un QR code puntato a questa pagina.</p>
+    </section>
+  </main>
+
+  <!-- Firebase Realtime Database compat SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script>
+    // Sostituisci questi valori con le tue credenziali Firebase dal progetto Realtime Database.
+    const firebaseConfig = {
+        apiKey: "AIzaSyAs9kwrZnnBTOaBzkLn6ZhLN5mfWWmXcl4",
+        authDomain: "tv-game-night.firebaseapp.com",
+        databaseURL: "https://tv-game-night-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "tv-game-night",
+        storageBucket: "tv-game-night.firebasestorage.app",
+        messagingSenderId: "570468387403",
+        appId: "1:570468387403:web:1bcd29c85f8e8d00539bce"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+    const gameStateRef = database.ref('currentGameState');
+    const connectedRef = database.ref('.info/connected');
+
+    const TABOO_WORDS = [
+      {word:'PIZZA', taboo:['MOZZARELLA','MARINARA','ITALIA','FORNO','FETTA']},
+      {word:'CALCIO', taboo:['PALLA','GOAL','STADIO','PARTITA','SQUADRA']},
+      {word:'SPIAGGIA', taboo:['SABBIA','MARE','OMBRELLONE','SOLE','NUOTARE']},
+      {word:'PIANOFORTE', taboo:['TASTI','MUSICA','SUONARE','NOTE','CONCERTO']},
+      {word:'CINEMA', taboo:['FILM','POP-CORN','PROIETTORE','BIGLIETTO','SCHERMO']},
+      {word:'PASTA', taboo:['TAVOLA','SUGO','FORCHETTA','SPAGHETTI','CUCINA']}
+    ];
+
+    const defaultState = {
+      mode: null,
+      wordIndex: -1,
+      word: '',
+      taboo: [],
+      currentPlayer: '',
+      currentPlayerId: null,
+      status: null,
+      timerSeconds: 60,
+      startedAt: 0,
+      endsAt: 0,
+      score: 0,
+      updatedAt: 0
+    };
+
+    const controls = {
+      btnStop: document.getElementById('btn-stop'),
+      status: document.getElementById('connection-state'),
+      hostMode: document.getElementById('host-mode'),
+      hostPlayer: document.getElementById('host-player'),
+      hostTimer: document.getElementById('host-timer'),
+      hostScore: document.getElementById('host-score'),
+      hostSummary: document.getElementById('host-summary')
+    };
+
+    let currentState = {...defaultState};
+    let timerInterval=null;
+
+    function setConnectionStatus(connected){
+      controls.status.className = `status-pill ${connected ? 'connected' : 'disconnected'}`;
+      controls.status.querySelector('span:last-child').textContent = connected ? 'connesso' : 'disconnesso';
+    }
+
+    function getRemainingSeconds(state=currentState){
+      if(state.status !== 'playing' || !state.endsAt)return state.timerSeconds || 0;
+      return Math.max(0, Math.ceil((state.endsAt - Date.now()) / 1000));
+    }
+
+    function renderTimer(){
+      controls.hostTimer.textContent = `${getRemainingSeconds()}s`;
+    }
+
+    function renderState(state){
+      currentState = {...defaultState, ...state};
+      const isActive = currentState.mode === 'taboo';
+      const statusLabel = currentState.status === 'playing' ? 'in gioco' : currentState.status === 'ended' ? 'tempo finito' : 'pronto';
+      controls.hostMode.textContent = `Modalità: ${isActive ? `Taboo ${statusLabel}` : 'In attesa'}`;
+      controls.hostPlayer.textContent = currentState.currentPlayer || 'Nessun giocatore selezionato';
+      controls.hostScore.textContent = currentState.score || 0;
+      controls.hostSummary.textContent = isActive && currentState.wordIndex >= 0 ? `Turno #${currentState.wordIndex + 1} di ${TABOO_WORDS.length}` : 'Apri play.html e premi Avvia';
+      controls.btnStop.disabled = !isActive;
+      renderTimer();
+    }
+
+    function handleStop(){
+      gameStateRef.update({status:'ended', mode:'taboo', endsAt:Date.now(), updatedAt:Date.now()}).catch(err => console.error('Errore fermando gioco:', err));
+    }
+
+    function init(){
+      controls.btnStop.addEventListener('click', handleStop);
+      timerInterval=setInterval(renderTimer, 500);
+
+      gameStateRef.on('value', snap => {
+        renderState(snap.val() || defaultState);
+      });
+
+      connectedRef.on('value', snap => {
+        setConnectionStatus(Boolean(snap.val()));
+      });
+    }
+
+    window.addEventListener('load', init);
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function(){
+        navigator.serviceWorker.register('./service-worker.js').catch(function(error){
+          console.warn('Service worker non registrato:', error);
+        });
+      });
+    }
+  </script>
+</body>
+</html>
